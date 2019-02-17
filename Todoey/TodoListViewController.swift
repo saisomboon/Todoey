@@ -11,10 +11,14 @@ import UIKit
 class TodoListViewController: UITableViewController {
 
     var itemArray = ["Wake up","Buy eggs","Go home"]
+    let defaults = UserDefaults.standard
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        if let items = defaults.array(forKey: "TodoListArray") as? [String] {
+            itemArray = items
+        }
     }
     
     //MARK - Tableview Datasource Methods
@@ -51,6 +55,7 @@ class TodoListViewController: UITableViewController {
         let action = UIAlertAction(title: "Add item", style: .default) { (action) in
             if textField.text != "" {
                 self.itemArray.append(textField.text!)
+                self.defaults.set(self.itemArray, forKey: "TodoListArray")
                 self.tableView.reloadData()
             } else {
 //                let emptyAlert = UIAlertController(title: "Error!", message: "No item added", preferredStyle: .alert)
@@ -62,12 +67,20 @@ class TodoListViewController: UITableViewController {
                 self.dismiss(animated: true, completion: nil)
             }
         }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .default) { (cancel) in
+            self.dismiss(animated: true, completion: nil)
+        }
+//        let randomAction = UIAlertAction(title: "Random", style: .default) { (cancel) in
+//            self.dismiss(animated: true, completion: nil)
+//        }
         
         alert.addTextField { (alertTextField) in
             alertTextField.placeholder = "fill in new item"
             textField = alertTextField
         }
         alert.addAction(action)
+        alert.addAction(cancelAction)
+//        alert.addAction(randomAction)
         present(alert, animated: true, completion: nil)
     }
     
