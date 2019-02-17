@@ -10,7 +10,7 @@ import UIKit
 
 class TodoListViewController: UITableViewController {
 
-    let itemArray = ["Wake up","Buy eggs","Go home"]
+    var itemArray = ["Wake up","Buy eggs","Go home"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,6 +40,35 @@ class TodoListViewController: UITableViewController {
             tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
         }
         
+    }
+    
+    //MARK - add new item section
+    @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
+        
+        var textField = UITextField()
+        
+        let alert = UIAlertController(title: "Add new Todoey item", message: "", preferredStyle: .alert)
+        let action = UIAlertAction(title: "Add item", style: .default) { (action) in
+            if textField.text != "" {
+                self.itemArray.append(textField.text!)
+                self.tableView.reloadData()
+            } else {
+//                let emptyAlert = UIAlertController(title: "Error!", message: "No item added", preferredStyle: .alert)
+//                let emptyAction = UIAlertAction(title: "OK", style: .default, handler: { (emptyAction) in
+//                    self.dismiss(animated: true, completion: nil)
+//                })
+//                emptyAlert.addAction(emptyAction)
+//                self.present(emptyAlert, animated: true, completion: nil)
+                self.dismiss(animated: true, completion: nil)
+            }
+        }
+        
+        alert.addTextField { (alertTextField) in
+            alertTextField.placeholder = "fill in new item"
+            textField = alertTextField
+        }
+        alert.addAction(action)
+        present(alert, animated: true, completion: nil)
     }
     
 }
