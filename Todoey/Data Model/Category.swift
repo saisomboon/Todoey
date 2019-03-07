@@ -11,6 +11,7 @@ import RealmSwift
 
 class Category: Object {
     @objc dynamic var name : String = ""
+    @objc dynamic var bColor : String = ""
     //List is like array and this is to declar that items property is set to have things in Item class
     let items = List<Item>()
 }

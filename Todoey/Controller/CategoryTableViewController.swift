@@ -8,8 +8,9 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
-class CategoryTableViewController: UITableViewController {
+class CategoryTableViewController: SwipeTableViewController {
     
     let realm = try! Realm()
     var categories : Results<Category>?
@@ -17,6 +18,8 @@ class CategoryTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         loadCategory()
+        tableView.separatorStyle = .none
+        tableView.rowHeight = 90.0
     }
     
     //MARK: - TableView Datasource Methods
@@ -26,9 +29,9 @@ class CategoryTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
-        
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         cell.textLabel?.text = categories?[indexPath.row].name ?? "No category added"
+        cell.backgroundColor = UIColor(hexString: categories?[indexPath.row].bColor ?? "1D9BF6")
         
         return cell
     }
@@ -40,6 +43,7 @@ class CategoryTableViewController: UITableViewController {
             if textField.text != "" {
                 let newCategory = Category()
                 newCategory.name = textField.text!
+                newCategory.bColor = UIColor.randomFlat.hexValue()
                 self.save(category: newCategory)
             } else {
                 self.dismiss(animated: true, completion: nil)
@@ -81,5 +85,17 @@ class CategoryTableViewController: UITableViewController {
     func loadCategory() {
         categories = realm.objects(Category.self)
         self.tableView.reloadData()
+    }
+    
+    override func updateModel(at indexPath: IndexPath) {
+        if let categoryForDeletion = self.categories?[indexPath.row] {
+            do {
+                try self.realm.write {
+                    self.realm.delete(categoryForDeletion)
+                    }
+                } catch {
+                    print("Error! : \(error)")
+            }
+        }
     }
 }
